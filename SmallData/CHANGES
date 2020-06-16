@@ -1,0 +1,30 @@
+1.0.7 2020-06-11
+  - Renamed brno data (brno → brnoUhb & brnoPrisma → brnoCeitec)
+  - Updated coauthors
+  - Fixed CHANGES to descending order
+1.0.6 2020-06-08
+  - Replaced T1w and T2w with defaced data
+  - Fixed CHANGES to include history from 1.0.0 to 1.0.5.
+
+1.0.5 2020-05-21
+  - Added: beijingGE, beijingPrisma, beijingVerio
+  - Fixed: ubc01->06: Split MT scan into MTon/MToff scans
+  - Fixed: ubc01->04: Only kept one run for T2star
+  - participants.tsv: sub-ubc*: Ingenia_Elition --> Ingenia-ElitionX
+
+1.0.4 2019-07-17
+  - Added: sub-pavia02, sub-pavia03, sub-pavia04, sub-pavia05, sub-pavia06
+
+1.0.3 2019-07-08
+  - Added: sub-pavia01, cmrra, cmrrb, ubc, tokyoSkyra(sub-07), tokyo750w(sub-07), tokyoIngenia(sub-07)
+  - Fixed participants.tsv for tokyoSkyra
+
+1.0.2 2019-05-22
+  - Updated: sub-mniS04 (fixed error introduced in 1.0.1)
+  - Updated: sub-tehranS04 (not the correct subject)
+
+1.0.1 2019-05-21
+  - Updated: sub-mniS04 (not the correct subject)
+
+1.0.0 2019-05-14
+  - Initial release
