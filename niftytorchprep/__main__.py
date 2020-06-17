@@ -1,53 +1,57 @@
-import re
+import click
 import os
+from subprocess import PIPE, run
+import invoke
 
-def main():
-    try:
-        from invoke import task, Program, Collection
-    except ModuleNotFoundError:
-        print("You are probably running `niftytorchprep` for the first time")
-        print("Press [enter] to install pyinvoke or Ctrl+C to abort\n")
-        input()
-        os.system("pip install invoke==1.4.1")
-        raise
+def out(command):
+    result = run(command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+    print(result.stdout)
+    print(result.stderr)
+    return result.stdout, result.stderr
 
-    @task
-    def getvisualqc(c):
-        """
-        Installs visualqc.
-        """
-        c.run("pip install -U visualqc", echo = True)
+@click.group("Quality Control")
+def qc():
+    pass
 
-    @task
-    def qct1(c, bids_dir, out_dir = None):
-        """
-        Runs Quality Control (T1) from visualqc package and stores the
-        results in the *out_dir*
-        """
-        command = f"visualqc_t1_mri -b {bids_dir}"
-        if not out_dir is None:
-            command += " -o {out_dir}"
-        out = c.run(command, echo = True)
+@qc.command()
+@click.argument('bids_dir', type=click.Path(exists=True))
+@click.option('--out_dir', default=None, help="output directory")
+def qc_anat(bids_dir, out_dir):
+    """
+    Runs Quality Control (T1) from visualqc package and stores the
+    results in the *out_dir*.
+    """
+    command = f"visualqc_t1_mri -b {bids_dir}"
+    if not out_dir is None:
+        command += " -o {out_dir}"
+    output, err = out(command)
+    if "command not found" in err:
+        print("You should install *visualqc* first")
 
-    @task
-    def qcfunc(c, bids_dir, out_dir = None):
-        """
-        Runs Quality Control (Functional) from visualqc package and stores the
-        results in the *out_dir*
-        """
-        command = f"visualqc_func_mri -b {bids_dir}"
-        if not out_dir is None:
-            command += " -o {out_dir}"
-        c.run(command, echo = True)
+@qc.command()
+@click.argument('bids_dir', type=click.Path(exists=True))
+@click.option('--out_dir', default=None, help="output directory")
+def qc_func(bids_dir, out_dir):
+    """
+    Runs Quality Control (Functional) from visualqc package and stores the
+    results in the *out_dir*
+    """
+    command = f"visualqc_func_mri -b {bids_dir}"
+    if not out_dir is None:
+        command += " -o {out_dir}"
+    output, err = out(command)
+    if "command not found" in err:
+        print("You should install *visualqc* first")
 
-    namespace = Collection(qct1, qcfunc, getvisualqc)
+@qc.command()
+def qc_visualqc():
+    """
+    Installs visualqc from PIP.
+    """
+    invoke.run("pip install -U visualqc")
 
-    program = Program(
-      version = "0.0.1",
-      namespace = namespace,
-      binary = "niftytorchprep"
-    )
-    program.run()
 
-if __name__ == "__main__":
-    main()
+cli = click.CommandCollection(sources=[qc])
+
+if __name__ == '__main__':
+    cli()

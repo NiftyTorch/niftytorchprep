@@ -6,6 +6,6 @@ setup(
     packages = ['niftytorchprep'],
     entry_points = {
         'console_scripts': [
-            'niftytorchprep = niftytorchprep.__main__:main'
+            'niftytorchprep = niftytorchprep.__main__:cli'
         ]
     })
