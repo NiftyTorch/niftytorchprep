@@ -22,7 +22,7 @@ def main():
             command += " -o {out_dir}"
         c.run(command, echo = True)
 
-    namespace = Collection(pwd, ls, add)
+    namespace = Collection(qc_t1)
 
     program = Program(
       version = "0.0.1",
