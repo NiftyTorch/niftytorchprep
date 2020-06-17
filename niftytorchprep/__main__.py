@@ -20,7 +20,7 @@ def main():
         command = f"visualqc_t1_mri -b {bids_dir}"
         if not out_dir is None:
             command += " -o {out_dir}"
-        c.run(command), echo = True)
+        c.run(command, echo = True)
 
     namespace = Collection(pwd, ls, add)
 
