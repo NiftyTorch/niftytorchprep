@@ -73,13 +73,17 @@ def data():
 
 @data.command()
 @click.argument('bids_dir', type = click.Path(exists = True))
-@click.argument('out_dir', type = click.Path(exists = True))
-def bids_totraining(bids_dir, out_dir):
+@click.argument('out_dir', type = click.Path())
+@click.argument('var_to_classify', type = str)
+@click.option('--test', default=0.1, type=float, help="proportion of test set (from 0 to 1)")
+@click.option('--val', default=0.2, type=float, help="proportion of validation set (from 0 to 1)")
+def bids_totraining(bids_dir, out_dir, var_to_classify, test, val):
     """
     Takes data from BIDS_DIR and organises it in a training ready format
-    in OUT_DIR
+    in OUT_DIR. You need to give your target label (VAR_TO_CLASSIFY) too.
     """
-    click.echo("Your data will be organised in a NIFTYTORCH ready structure")
+    create_training_data(bids_dir, out_dir, var_to_classify,
+                         test_set_size  = test, val_set_size = val)
 
 
 help_content = """

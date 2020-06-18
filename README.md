@@ -15,6 +15,12 @@ For NiftyTorch getting started: https://niftytorch.github.io/doc/#installation
 
 It installs `niftytorchprep` CLI tool that helps you prepare your data for *niftytorch* training.
 
+### Install
+```
+python setup.py install
+```
+
+### Interfacte
 ```
 $ niftytorchprep --help  
 Usage: niftytorchprep [OPTIONS] COMMAND [ARGS]...
