@@ -37,4 +37,4 @@ Commands:
 
 See it in action:
 
-![Alt text](relative/path/to/img.jpg?raw=true "nitrytorchprep demo")
+![nitrytorchprep demo](extras/niftytorch.gif "nitrytorchprep demo")
