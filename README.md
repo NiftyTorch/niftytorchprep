@@ -46,7 +46,7 @@ See it in action:
 ![nitrytorchprep demo](extras/niftytorch.gif "nitrytorchprep demo")
 
 ## Contributors
-**Dominik Krzemiński**  
+**Dominik Krzemiński** [@dokato](https://github.com/dokato)  
 Cardiff University Brain Research Imaging Centre
 
 **Sara Morsy**  
