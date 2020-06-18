@@ -52,5 +52,5 @@ Cardiff University Brain Research Imaging Centre
 **Sara Morsy**  
 Faculty of Medicine, Tanta University, Egypt
 
-**Kaori Lily Ito** @kaoriito  
+**Kaori Lily Ito** [@kaoriito](https://github.com/kaoriito)  
 Neural Plasticity & Neurorehabilitaiton Laboratory, University of Southern California
