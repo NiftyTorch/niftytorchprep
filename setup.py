@@ -3,7 +3,7 @@ from setuptools import setup
 requirements = [
     'click>=7.1.1',
     'invoke>=1.4.1',
-    'sklearn>=0.22.1'
+    'scikit-learn>=0.22.1'
 ]
 
 setup(

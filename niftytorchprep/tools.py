@@ -78,28 +78,28 @@ def copyImageFiles(dirContainingModalityDirs,subjOutputDir, subjID):
     Provide (1) path to the parent directory of the modality directories 
     (either the subject or session level), and (2) the subject output directory
     '''
-    workingdir=dirContainingModalityDirs
-    modalpaths=os.path.join(workingdir,'*')
-    modalities=sorted(glob.glob(modalpaths))
+    workingdir = dirContainingModalityDirs
+    modalpaths = os.path.join(workingdir, '*')
+    modalities = sorted(glob.glob(modalpaths))
 
     for modality in modalities:
         print(modality)
-        imgfilepaths=os.path.join(modality,'*.nii*')
-        imgfiles=sorted(glob.glob(imgfilepaths))
+        imgfilepaths = os.path.join(modality, '*.nii*')
+        imgfiles = sorted(glob.glob(imgfilepaths))
         if not imgfiles:
-            sys.exit("could not find nifti files for", subjID)
+            raise IOError("could not find nifti files for", subjID)
         for img in imgfiles:
             try:
                 shutil.copy(img,subjOutputDir)
             except OSError:
-                print("unable to copy nifti files")
+                print("unable to copy nifti files") # TODO exception?
             else:
                 print("copied files successfully")
 
 def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_size  = 0.1,
                          val_set_size = 0.2):
     """
-    List BIDS files with summary of extensions in each folder.
+    Creates training data for NIFTYTORCH from *bids_dir*.
     Input:
         *bids_dir* - str
           path to BIDS catalogue
@@ -124,20 +124,18 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
     
     participantsTsvPath   = os.path.join(bids_dir, 'participants.tsv')
     participantsTsvExists = os.path.exists(participantsTsvPath)
-    participant_metadata = pd.read_csv(participantsTsvPath, sep='\t')
-    participant_metadata = participant_metadata.sort_values('participant_id')
+    participant_metadata  = pd.read_csv(participantsTsvPath, sep='\t')
+    participant_metadata  = participant_metadata.sort_values('participant_id')
     if not participantsTsvExists:
-        sys.exit("ERROR: participants.tsv file missing. Do not continue without this file")
+        raise IOError("participants.tsv file missing. Do not continue without this file")
     else:
         print("participants.tsv file found")
-    try:
-        subsetDf = participant_metadata[participant_metadata["participant_id"].isin(subjList)]
-    except OSError:
-        sys.exit("ERROR: check that your participants are listed in the participants.tsv file")
-
+    subsetDf = participant_metadata[participant_metadata["participant_id"].isin(subjList)]
+    if len(subsetDf) == 0:
+        raise ValueError("Check that your participants are listed in the participants.tsv file")
     # check if the variable_to_classify is in the participants.tsv file
     if not variable_to_classify in list(participant_metadata.columns):
-        sys.exit("ERROR: please make sure your variable is a column in your participants.tsv file")
+        raise IOError("Please make sure your variable is a column in your participants.tsv file")
     # Make new folders for each subject
     try:
         os.mkdir(output_dir)
@@ -173,19 +171,18 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
             workingdir = subj
             copyImageFiles(workingdir, subjOutputDir, subjID)
 
-    subjListKey={v: k for k, v in enumerate(subjList)}
+    subjListKey = {v: k for k, v in enumerate(subjList)}
     y = subsetDf[variable_to_classify].to_numpy()
     num_samples = len(y)
     X = np.zeros(num_samples)
-    print('>' * 8, subjList, X.shape)
     sss = StratifiedShuffleSplit(n_splits = 2, test_size = test_set_size)
     indices1, indices2 = sss.split(X, y)
     test_indices=indices1[1]
 
     if not (pd.Series(subjList).isin(subsetDf["participant_id"]).all()):
-        sys.exit("ERROR: there are participants missing in your participants.tsv file")
+        raise IOError("ERROR: there are participants missing in your participants.tsv file")
     if subsetDf[variable_to_classify].isnull().values.any():
-        sys.exit("You have missing values in your selected variable for classification.")
+        raise IOError("You have missing values in your selected variable for classification.")
 
     # remove test set from rest of data for re-splitting and save subj ids
     test_subj = []
@@ -202,8 +199,9 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
     subjListKey = {v: k for k, v in enumerate(subjList)}
 
     # recalculate val_set_size percentage based on remaining participants
-    new_val_setsize=(val_set_size*num_samples)/((val_set_size*num_samples)+((1-(val_set_size+test_set_size))*num_samples))
-    new_val_setsize=round(new_val_setsize,2)
+    new_val_setsize = (val_set_size*num_samples)/((val_set_size*num_samples) +\
+                                       ((1-(val_set_size+test_set_size)) * num_samples))
+    new_val_setsize = round(new_val_setsize, 2)
     y = subsetDf[variable_to_classify].to_numpy()
     num_samples = len(y)
     X = np.zeros(num_samples)
@@ -215,35 +213,22 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
         sss = StratifiedShuffleSplit(n_splits = 2, test_size = 0.5)
         print('validation set size: 0.5')
 
-    indices1,indices2=sss.split(X, y)
+    indices1,indices2 = sss.split(X, y)
     train_indices = indices1[0]
     validation_indices = indices1[1]
 
-    train_dir=os.path.join(output_dir,'train')
-    val_dir=os.path.join(output_dir,'val')
-    test_dir=os.path.join(output_dir,'test')
+    train_dir = os.path.join(output_dir, 'train')
+    val_dir = os.path.join(output_dir, 'val')
+    test_dir = os.path.join(output_dir, 'test')
 
-    try:
-        os.mkdir(train_dir)
-    except OSError:
-        print ("Creation of the directory %s failed" % train_dir)
-    else:
-        print ("Successfully created the directory %s " % train_dir)
+    for newdir in (train_dir, val_dir, test_dir):
+        try:
+            os.mkdir(newdir)
+        except OSError:
+            print("Creation of the directory %s failed" % newdir) # TODO should that be exception?
+        else:
+            print("Successfully created the directory %s " % newdir)
 
-    try:
-        os.mkdir(test_dir)
-    except OSError:
-        print ("Creation of the directory %s failed" % test_dir)
-    else:
-        print ("Successfully created the directory %s " % test_dir)
-
-    try:
-        os.mkdir(val_dir)
-    except OSError:
-        print ("Creation of the directory %s failed" % val_dir)
-    else:
-        print ("Successfully created the directory %s " % val_dir)
-    
     for subj in test_subj:
         print(subj, "is in test set")
         subjOrigDir=os.path.join(output_dir, subj)
@@ -272,6 +257,6 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
                 print("destination may already exist")
 
 if __name__ == "__main__":
-    #heck_bids_files('../SmallData')
-    #list_bids_files('../SmallData')
-    create_training_data('testcopybids2', 'outtest', 'sex')
+    heck_bids_files('../SmallData')
+    list_bids_files('../SmallData')
+    create_training_data('testcopybids', 'outtest', 'sex')
