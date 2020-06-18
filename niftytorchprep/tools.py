@@ -97,7 +97,7 @@ def copyImageFiles(dirContainingModalityDirs,subjOutputDir, subjID):
                 print("copied files successfully")
 
 def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_size  = 0.1,
-                         val_set_size = 0.2, num_classes=2):
+                         val_set_size = 0.2):
     """
     Creates training data for NIFTYTORCH from *bids_dir*.
     Input:
@@ -111,8 +111,6 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
           proportion of subject to go into test set
         *val_set_size* - float
           proportion of subject to go into validation set
-        *num_classes* - int
-          number of classes to classify
     Output:
         None
     """
@@ -139,7 +137,7 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
     if not variable_to_classify in list(participant_metadata.columns):
         raise IOError("Please make sure your variable is a column in your participants.tsv file")
 
-
+    num_classes=len(np.unique(participant_metadata[variable_to_classify].to_numpy()))
     if not (len(subjList)*test_set_size)>=num_classes:
         raise IOError("Please increase the proportion of the test set size so there will be at least one sample per class.")
     if not (len(subjList)*val_set_size)>=num_classes:
