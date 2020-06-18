@@ -46,7 +46,7 @@ def qc_anat(bids_dir, out_dir):
     if not out_dir is None:
         command += " -o {out_dir}"
     out = run(command, echo = True, warn = True)
-    if out.failed == True and "command not found" in out.sterr:
+    if out.failed == True and "command not found" in out.stderr:
         print("You should install *visualqc* first")
 
 @qc.command()
@@ -61,7 +61,7 @@ def qc_func(bids_dir, out_dir):
     if not out_dir is None:
         command += " -o {out_dir}"
     out = run(command, echo = True, warn = True)
-    if out.failed == True and "command not found" in out.sterr:
+    if out.failed == True and "command not found" in out.stderr:
         print("You should install *visualqc* first")
 
 @qc.command()
