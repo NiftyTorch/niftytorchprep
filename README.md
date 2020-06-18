@@ -7,9 +7,9 @@ The chat room: https://mattermost.brainhack.org/brainhack/channels/hbmhack-nifty
 
 The project pitch is included in the repo. 
 
-For BIDS: https://bids.neuroimaging.io
-For NiftyTorch getting started: https://niftytorch.github.io/doc/#installation
-BrainHack website: https://ohbm.github.io/hackathon2020/team/
+For BIDS: https://bids.neuroimaging.io  
+For NiftyTorch getting started: https://niftytorch.github.io/doc/#installation  
+BrainHack website: https://ohbm.github.io/hackathon2020/team/  
 
 
 ## How it works?
