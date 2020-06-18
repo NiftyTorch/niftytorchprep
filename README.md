@@ -9,3 +9,28 @@ The project pitch is included in the repo.
 
 For BIDS: https://bids.neuroimaging.io
 For NiftyTorch getting started: https://niftytorch.github.io/doc/#installation
+
+
+## How it works?
+
+It install `niftytorchprep` CLI tool that helps you prepare your data for *niftytorch* training.
+
+```
+$ niftytorchprep --help  
+Usage: niftytorchprep [OPTIONS] COMMAND [ARGS]...
+
+  NIFTYTORCHPREP helps to get your data ready for *niftytorch* training. You
+  can browse through your options below. Each one has respective help
+  function.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  bids-files       Print types of files and their number per folder.
+  bids-totraining  Takes data from BIDS_DIR and organises it in a training...
+  bids-validate    Basic BIDS verification.
+  qc-anat          Runs Quality Control (T1) from visualqc package and...
+  qc-func          Runs Quality Control (Functional) from visualqc package...
+  qc-getvisualqc   Installs visualqc from PIP.
+```
