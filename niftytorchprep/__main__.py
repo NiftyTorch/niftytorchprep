@@ -72,7 +72,7 @@ def qc_getvisualqc():
     run("pip install -U visualqc")
 
 
-cli = click.CommandCollection(sources=[qc, bids])
+cli = click.CommandCollection("niftytorch prep tools", sources=[qc, bids])
 
 if __name__ == '__main__':
     cli()
