@@ -72,7 +72,13 @@ def qc_getvisualqc():
     run("pip install -U visualqc")
 
 
-cli = click.CommandCollection("niftytorch prep tools", sources=[qc, bids])
+help_content = """
+NIFTYTORCHPREP helps to get your data ready
+for *niftytorch* training. You can browse through your
+options below. Each one has respective help function.
+"""
+cli = click.CommandCollection(sources = [qc, bids],
+                              help = help_content)
 
 if __name__ == '__main__':
     cli()
