@@ -13,7 +13,7 @@ For NiftyTorch getting started: https://niftytorch.github.io/doc/#installation
 
 ## How it works?
 
-It install `niftytorchprep` CLI tool that helps you prepare your data for *niftytorch* training.
+It installs `niftytorchprep` CLI tool that helps you prepare your data for *niftytorch* training.
 
 ```
 $ niftytorchprep --help  
@@ -34,3 +34,7 @@ Commands:
   qc-func          Runs Quality Control (Functional) from visualqc package...
   qc-getvisualqc   Installs visualqc from PIP.
 ```
+
+See it in action:
+
+![nitrytorchprep demo](extras/niftytorch.gif "nitrytorchprep demo")
