@@ -75,7 +75,7 @@ def list_bids_files(startpath, width = 20):
 
 def copy_image_files(dir_with_modality_dirs, subj_output_dir, subjid):
     '''
-    Provide (1) path to the parent directory of the modality directories 
+    Provide (1) path to the parent directory of the modality directories
     (either the subject or session level), and (2) the subject output directory
     '''
     workingdir = dir_with_modality_dirs
@@ -129,7 +129,7 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
     for subj in subj_dirs:
         subjID = os.path.basename(subj)
         subjList.append(subjID)
-    
+
     participantsTsvPath   = os.path.join(bids_dir, 'participants.tsv')
     participantsTsvExists = os.path.exists(participantsTsvPath)
     participant_metadata  = pd.read_csv(participantsTsvPath, sep='\t')
@@ -144,6 +144,13 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
     # check if the variable_to_classify is in the participants.tsv file
     if not variable_to_classify in list(participant_metadata.columns):
         raise IOError("Please make sure your variable is a column in your participants.tsv file")
+
+    num_classes=len(np.unique(participant_metadata[variable_to_classify].to_numpy()))
+    if not (len(subjList)*test_set_size)>=num_classes:
+        raise IOError("Please increase the proportion of the test set size so there will be at least one sample per class.")
+    if not (len(subjList)*val_set_size)>=num_classes:
+        raise IOError("Please increase the proportion of the validation set size so there will be at least one sample per class.")
+
     # Make new folders for each subject
     try:
         os.mkdir(output_dir)
@@ -155,15 +162,16 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
         subjname = os.path.basename(subj)
         print(subjname)
         newdirpath = os.path.join(output_dir,subjname)
-        try: 
-            os.mkdir(newdirpath)
+        try:
+            if not os.path.exists(newdirpath):
+                os.mkdir(newdirpath)
         except OSError:
             print ("Creation of the directory %s failed" % newdirpath)
         else:
             print ("Successfully created the directory %s " % newdirpath)
 
     # Copy nifti files from bids dir to output directory
-    for subj in subj_dirs: 
+    for subj in subj_dirs:
         sespath = os.path.join(subj,'ses-*')
         ses_dirs = sorted(glob.glob(sespath))
         subjID = os.path.basename(subj)
@@ -190,7 +198,7 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
     if not (pd.Series(subjList).isin(subsetDf["participant_id"]).all()):
         raise IOError("There are participants missing in your participants.tsv file")
     if subsetDf[variable_to_classify].isnull().values.any():
-        raise IOError("You have missing values in your selected variable for classification.")
+        raise IOError("ERROR: You have missing values in your selected variable for classification.")
 
     # remove test set from rest of data for re-splitting and save subj ids
     test_subj = []
@@ -199,7 +207,7 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
             indexNames = subsetDf[subsetDf['participant_id'] == subj].index
             subsetDf = subsetDf.drop(indexNames)
             test_subj.append(subj)
-            try: 
+            try:
                 subjList.remove(subj)
             except:
                 print('subject not in list anymore')
@@ -214,12 +222,8 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
     num_samples = len(y)
     X = np.zeros(num_samples)
 
-    if num_samples * new_val_setsize >= 2:
-        sss = StratifiedShuffleSplit(n_splits = 2, test_size = new_val_setsize)
-        print('validation set size:', new_val_setsize)
-    else:
-        sss = StratifiedShuffleSplit(n_splits = 2, test_size = 0.5)
-        print('validation set size: 0.5')
+    sss = StratifiedShuffleSplit(n_splits = 2, test_size = new_val_setsize)
+    print('validation set size:', new_val_setsize)
 
     indices1,indices2 = sss.split(X, y)
     train_indices = indices1[0]
@@ -231,9 +235,10 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
 
     for newdir in (train_dir, val_dir, test_dir):
         try:
-            os.mkdir(newdir)
+            if not os.path.exists(newdir):
+                os.mkdir(newdir)
         except OSError:
-            print("Creation of the directory %s failed" % newdir) # TODO should that be exception?
+            raise ValueError("Creation of the directory %s failed" % newdir)
         else:
             print("Successfully created the directory %s " % newdir)
 
