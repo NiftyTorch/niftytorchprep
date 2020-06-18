@@ -26,10 +26,6 @@ def bids_files(bids_dir):
     """
     list_bids_files(bids_dir)
 
-@click.group("Data preparation")
-def data():
-    pass
-
 @click.group("Quality Control")
 def qc():
     pass
@@ -71,13 +67,27 @@ def qc_getvisualqc():
     """
     run("pip install -U visualqc")
 
+@click.group("Data preparation")
+def data():
+    pass
+
+@data.command()
+@click.argument('bids_dir', type = click.Path(exists = True))
+@click.argument('out_dir', type = click.Path(exists = True))
+def bids_totraining(bids_dir, out_dir):
+    """
+    Takes data from BIDS_DIR and organises it in a training ready format
+    in OUT_DIR
+    """
+    click.echo("Your data will be organised in a NIFTYTORCH ready structure")
+
 
 help_content = """
 NIFTYTORCHPREP helps to get your data ready
 for *niftytorch* training. You can browse through your
 options below. Each one has respective help function.
 """
-cli = click.CommandCollection(sources = [qc, bids],
+cli = click.CommandCollection(sources = [qc, bids, data],
                               help = help_content)
 
 if __name__ == '__main__':
