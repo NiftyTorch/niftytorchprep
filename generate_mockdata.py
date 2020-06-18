@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-folder = 'testcopybids2/'
+folder = 'testcopybids/'
 os.mkdir(folder)
 f = open(os.path.join(folder, 'participants.tsv'),'w')
 f.write('participant_id\tsex\tage\n')

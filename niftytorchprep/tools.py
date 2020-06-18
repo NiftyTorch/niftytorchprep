@@ -90,9 +90,9 @@ def copyImageFiles(dirContainingModalityDirs,subjOutputDir, subjID):
             raise IOError("could not find nifti files for", subjID)
         for img in imgfiles:
             try:
-                shutil.copy(img,subjOutputDir)
+                shutil.copy(img, subjOutputDir)
             except OSError:
-                print("unable to copy nifti files") # TODO exception?
+                raise IOError("unable to copy nifti files")
             else:
                 print("copied files successfully")
 
@@ -234,7 +234,7 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
         subjOrigDir=os.path.join(output_dir, subj)
         destination=test_dir  
         try:
-            dest = shutil.move(subjOrigDir, destination) 
+            dest = shutil.move(subjOrigDir, destination)
         except OSError:
             print("destination may already exist")
 
@@ -252,7 +252,7 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
             subjOrigDir = os.path.join(output_dir, subj)
             destination = val_dir
             try:
-                dest = shutil.move(subjOrigDir, destination) 
+                dest = shutil.move(subjOrigDir, destination)
             except OSError:
                 print("destination may already exist")
 
