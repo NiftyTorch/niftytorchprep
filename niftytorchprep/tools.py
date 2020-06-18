@@ -248,8 +248,6 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
         elif subjListKey[subj] in validation_indices:
             print(subj, "is in validation set")
             move_to_destination(output_dir, subj, val_dir)
-        else:
-
 
 if __name__ == "__main__":
     heck_bids_files('../SmallData')
