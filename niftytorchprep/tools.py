@@ -73,12 +73,12 @@ def list_bids_files(startpath, width = 20):
 
 
 
-def copyImageFiles(dirContainingModalityDirs,subjOutputDir, subjID):
+def copy_image_files(dir_with_modality_dirs, subj_output_dir, subjid):
     '''
     Provide (1) path to the parent directory of the modality directories
     (either the subject or session level), and (2) the subject output directory
     '''
-    workingdir = dirContainingModalityDirs
+    workingdir = dir_with_modality_dirs
     modalpaths = os.path.join(workingdir, '*')
     modalities = sorted(glob.glob(modalpaths))
 
@@ -87,14 +87,22 @@ def copyImageFiles(dirContainingModalityDirs,subjOutputDir, subjID):
         imgfilepaths = os.path.join(modality, '*.nii*')
         imgfiles = sorted(glob.glob(imgfilepaths))
         if not imgfiles:
-            raise IOError("could not find nifti files for", subjID)
+            raise IOError("could not find nifti files for", subjid)
         for img in imgfiles:
             try:
-                shutil.copy(img,subjOutputDir)
+                shutil.copy(img, subj_output_dir)
             except OSError:
-                print("unable to copy nifti files") # TODO exception?
+                raise IOError("unable to copy nifti files")
             else:
                 print("copied files successfully")
+
+def move_to_destination(output_dir, subj, destination):
+    'Helper function that moves subject data (*subj*) to *output_dir* / *destination*'
+    subj_orig_path = os.path.join(output_dir, subj)
+    try:
+        dest = shutil.move(subj_orig_path, destination)
+    except OSError:
+        print("destination may already exist")
 
 def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_size  = 0.1,
                          val_set_size = 0.2):
@@ -173,11 +181,11 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
             for session in ses_dirs:
                 print(session)
                 workingdir = session
-                copyImageFiles(workingdir,subjOutputDir, subjID)
+                copy_image_files(workingdir,subjOutputDir, subjID)
         if not ses_dirs:
             print("ses_dirs do not exist")
             workingdir = subj
-            copyImageFiles(workingdir, subjOutputDir, subjID)
+            copy_image_files(workingdir, subjOutputDir, subjID)
 
     subjListKey = {v: k for k, v in enumerate(subjList)}
     y = subsetDf[variable_to_classify].to_numpy()
@@ -188,7 +196,7 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
     test_indices=indices1[1]
 
     if not (pd.Series(subjList).isin(subsetDf["participant_id"]).all()):
-        raise IOError("ERROR: there are participants missing in your participants.tsv file")
+        raise IOError("There are participants missing in your participants.tsv file")
     if subsetDf[variable_to_classify].isnull().values.any():
         raise IOError("ERROR: You have missing values in your selected variable for classification.")
 
@@ -236,30 +244,15 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
 
     for subj in test_subj:
         print(subj, "is in test set")
-        subjOrigDir=os.path.join(output_dir, subj)
-        destination=test_dir
-        try:
-            dest = shutil.move(subjOrigDir, destination)
-        except OSError:
-            print("destination may already exist")
+        move_to_destination(output_dir, subj, test_dir)
 
     for subj in subjListKey:
         if subjListKey[subj] in train_indices:
             print(subj, "is in training set")
-            subjOrigDir = os.path.join(output_dir, subj)
-            destination = train_dir
-            try:
-                dest = shutil.move(subjOrigDir, destination)
-            except OSError:
-                print("destination may already exist")
+            move_to_destination(output_dir, subj, train_dir)
         elif subjListKey[subj] in validation_indices:
             print(subj, "is in validation set")
-            subjOrigDir = os.path.join(output_dir, subj)
-            destination = val_dir
-            try:
-                dest = shutil.move(subjOrigDir, destination)
-            except OSError:
-                print("destination may already exist")
+            move_to_destination(output_dir, subj, val_dir)
 
 if __name__ == "__main__":
     heck_bids_files('../SmallData')
