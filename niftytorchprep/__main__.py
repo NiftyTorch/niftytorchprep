@@ -80,7 +80,7 @@ def data():
 def bids_totraining(bids_dir, out_dir, var_to_classify, test, val):
     """
     Takes data from BIDS_DIR and organises it in a training ready format
-    in OUT_DIR.
+    in OUT_DIR. You need to give your target label (VAR_TO_CLASSIFY) too.
     """
     create_training_data(bids_dir, out_dir, var_to_classify,
                          test_set_size  = test, val_set_size = val)
