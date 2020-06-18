@@ -44,3 +44,13 @@ Commands:
 See it in action:
 
 ![nitrytorchprep demo](extras/niftytorch.gif "nitrytorchprep demo")
+
+## Contributors
+Dominik Krzemiński
+Cardiff University Brain Research Imaging Centre
+
+Sara Morsy 
+Faculty of Medicine, Tanta University, Egypt
+
+Kaori Lily Ito
+Neural Plasticity & Neurorehabilitaiton Laboratory, University of Southern California
