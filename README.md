@@ -49,7 +49,7 @@ See it in action:
 **Dominik Krzemiński** [@dokato](https://github.com/dokato)  
 Cardiff University Brain Research Imaging Centre
 
-**Sara Morsy**  
+**Sara Morsy** [@SaraMorsy](https://github.com/SaraMorsy)  
 Faculty of Medicine, Tanta University, Egypt
 
 **Kaori Lily Ito** [@kaoriito](https://github.com/kaoriito)  
