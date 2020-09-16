@@ -1,27 +1,26 @@
-# ohbm-hackthon2020
-BIDS to NiftyTorch: data preparation for deep learning
+# niftytorchprep
 
-This repository is dedicated to NiftyTorch OHBM BrainHack [project](https://github.com/ohbm/hackathon2020/issues/85).
-
-The chat room: https://mattermost.brainhack.org/brainhack/channels/hbmhack-niftytorch
-
-The project pitch is included in the repo. 
-
-For BIDS: https://bids.neuroimaging.io  
-For NiftyTorch getting started: https://niftytorch.github.io/doc/#installation  
-BrainHack website: https://ohbm.github.io/hackathon2020/team/  
-
+BIDS to NiftyTorch: data preparation for deep learning.
 
 ## How it works?
 
-It installs `niftytorchprep` CLI tool that helps you prepare your data for *niftytorch* training.
+`niftytorchprep` command-line interface tool helps you prepare your data for *niftytorch* training. It check if BIDS format of your data is correct and transforms it
+into the format that is coherent with deep learning models training.
 
 ### Install
+
+```
+pip install git+https://github.com/NiftyTorch/ohbm-hackthon2020.git
+```
+
+Or download this repository and call:
+
 ```
 python setup.py install
 ```
 
-### Interfacte
+### Interface
+
 ```
 $ niftytorchprep --help  
 Usage: niftytorchprep [OPTIONS] COMMAND [ARGS]...
@@ -42,11 +41,25 @@ Commands:
   qc-getvisualqc   Installs visualqc from PIP.
 ```
 
+Here is an example that splits the data from various participants in BIDS format among:
+training, test and validation folders:
+
+```
+niftytorchprep bids-totraining my_bids_data/ my_output_to_dl/ gender --test 0.2 --val 0.1
+```
+
+To get help for a specific option, call for example:
+
+```
+niftytorchprep bids-totraining --help
+```
+
 See it in action:
 
 ![nitrytorchprep demo](extras/niftytorch.gif "nitrytorchprep demo")
 
 ## Contributors
+
 **Dominik Krzemiński** [@dokato](https://github.com/dokato)  
 Cardiff University Brain Research Imaging Centre
 
@@ -55,3 +68,7 @@ Faculty of Medicine, Tanta University, Egypt
 
 **Kaori Lily Ito** [@kaoriito](https://github.com/kaoriito)  
 Neural Plasticity & Neurorehabilitaiton Laboratory, University of Southern California
+
+### History
+
+This project has been initiated at [OHBM Hackthon 2020](https://github.com/ohbm/hackathon2020/issues/85).

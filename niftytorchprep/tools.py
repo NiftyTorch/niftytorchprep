@@ -130,9 +130,9 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
         subjID = os.path.basename(subj)
         subjList.append(subjID)
 
-    participantsTsvPath   = os.path.join(bids_dir, 'participants.tsv')
-    participantsTsvExists = os.path.exists(participantsTsvPath)
-    participant_metadata  = pd.read_csv(participantsTsvPath, sep='\t')
+    participants_tsv_path   = os.path.join(bids_dir, 'participants.tsv')
+    participantsTsvExists = os.path.exists(participants_tsv_path)
+    participant_metadata  = pd.read_csv(participants_tsv_path, sep='\t')
     participant_metadata  = participant_metadata.sort_values('participant_id')
     if not participantsTsvExists:
         raise IOError("participants.tsv file missing. Do not continue without this file")
@@ -145,10 +145,10 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
     if not variable_to_classify in list(participant_metadata.columns):
         raise IOError("Please make sure your variable is a column in your participants.tsv file")
 
-    num_classes=len(np.unique(participant_metadata[variable_to_classify].to_numpy()))
-    if not (len(subjList)*test_set_size)>=num_classes:
+    num_classes = len(np.unique(participant_metadata[variable_to_classify].to_numpy()))
+    if not (len(subjList) * test_set_size) >= num_classes:
         raise IOError("Please increase the proportion of the test set size so there will be at least one sample per class.")
-    if not (len(subjList)*val_set_size)>=num_classes:
+    if not (len(subjList) * val_set_size) >= num_classes:
         raise IOError("Please increase the proportion of the validation set size so there will be at least one sample per class.")
 
     # Make new folders for each subject
@@ -181,7 +181,7 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
             for session in ses_dirs:
                 print(session)
                 workingdir = session
-                copy_image_files(workingdir,subjOutputDir, subjID)
+                copy_image_files(workingdir, subjOutputDir, subjID)
         if not ses_dirs:
             print("ses_dirs do not exist")
             workingdir = subj
@@ -193,7 +193,7 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
     X = np.zeros(num_samples)
     sss = StratifiedShuffleSplit(n_splits = 2, test_size = test_set_size)
     indices1, indices2 = sss.split(X, y)
-    test_indices=indices1[1]
+    test_indices = indices1[1]
 
     if not (pd.Series(subjList).isin(subsetDf["participant_id"]).all()):
         raise IOError("There are participants missing in your participants.tsv file")
@@ -255,6 +255,6 @@ def create_training_data(bids_dir, output_dir, variable_to_classify, test_set_si
             move_to_destination(output_dir, subj, val_dir)
 
 if __name__ == "__main__":
-    heck_bids_files('../SmallData')
+    check_bids_files('../SmallData')
     list_bids_files('../SmallData')
     create_training_data('testcopybids', 'outtest', 'sex')
